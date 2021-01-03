@@ -22,7 +22,7 @@ const GameBoard = () => {
     return buttonArrays;
   };
   // sending data 
-  const sendData = (movement,whoPlay) => (
+  const sData = function sendData(movement,whoPlay){(
     axios.post(URL, {
         body: {
           'action': `Move triggered (${whoPlay}) (${movement})`
@@ -34,17 +34,16 @@ const GameBoard = () => {
       .catch(function (error) {
         console.log(error);
       })
-   
-    )
+    )}
   const handleClick = (index, item) => (e) => {
     let newArr = [...squares]; // copying the old data array
     if (player) {
     
-      sendData(item,'X')
+      sData(item.split(',').reverse().join(',')   ,'X')
       newArr[index] = "X";
       setPlayer(false); // replace  player
     } else {
-     sendData(item,'O')
+      sData(item.split(',').reverse().join(',')   ,'O')
       newArr[index] = "O";
       setPlayer(true); // replace  player
     }
@@ -59,7 +58,7 @@ const GameBoard = () => {
         <p className="fs-3">Create NxN Tic Tac Toe (Min 3x3 - Max 6x6)</p>
         <input
           type="number"
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => e.target.value>= 3 && e.target.value <=6 ? setValue(e.target.value) : window.alert("Min 3x3 - Max 6x6")}
           min="3" max="6"
           value={value}
         ></input>
@@ -71,17 +70,21 @@ const GameBoard = () => {
           <span>
             <button
               key={index}
+              id={index}
+        
               className="btn btn-primary squares"
               onClick={handleClick(index, item)}
               value={squares[index]}
             >
-              {squares[index]}
+             {squares[index]}
             </button>
             <br />
           </span>
         ) : (
           <button
             key={index}
+            id={index}
+           
             className="btn btn-primary squares"
             onClick={handleClick(index, item)}
             value={squares[index]}
@@ -90,15 +93,14 @@ const GameBoard = () => {
           </button>
         );
       })}
-      {player ? (
-        <p className="fs-3">Next Player X</p>
-      ) : (
-        <p className="fs-3">Next Player O</p>
-      )}
+      
       <ResultGame
         playerResult={squares}
         value={value}
+        movementPlayer = {buttonArrays}
+        player = {player}
       />
+      
     </>
   );
 };
